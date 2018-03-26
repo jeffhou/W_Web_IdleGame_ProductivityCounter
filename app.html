@@ -5,6 +5,7 @@
 
   var numTodos = 0;
   var productivity = 0;
+  var legalPads = 0;
 
   function tick () {
     console.log("tick");
@@ -21,12 +22,21 @@
     updateDisplay();
   }
 
+  function buyLegalPad () {
+    if (productivity >= legalPads) {
+      productivity -= legalPads;
+      legalPads += 1;
+    }
+    updateDisplay();
+  }
+
   // update displays
   function updateDisplay () {
     displayNumTodos();
     displayProductivity();
+    displayLegalPads();
   }
-  
+
   function displayNumTodos () {
     let newString = numTodos + " todos";
     document.getElementById("numTodos").innerText = newString;
@@ -37,9 +47,17 @@
     document.getElementById("productivity").innerText = newString;
   }
 
+  function displayLegalPads () {
+    let newString = legalPads + " legal pads";
+    document.getElementById("legalPads").innerText = newString;
+    document.getElementById("legalPadButton").disabled = productivity < legalPads;
+    document.getElementById("legalPadButton").innerText = "buy a legal pad (" + legalPads + " productivity)";
+  }
+
   // update model
   function incrementTodos () {
     numTodos++;
+    numTodos += legalPads;
   }
   </script>
 </head>
@@ -49,7 +67,10 @@
   <button onclick="userClick()">push</button>
   <div>
     <div><b>Helpers</b></div>
-    <div></div>
+    <div>
+      <div id="legalPads"></div>
+      <button id="legalPadButton" onclick="buyLegalPad()"></button>
+    </div>
     <div></div>
     <div></div>
     <div></div>
