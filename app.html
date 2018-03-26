@@ -7,11 +7,12 @@
   var productivity = 0;
   var legalPads = 0;
   var todoApps = 0;
+  var pythonScripts = 0;
 
   function tick () {
     console.log("tick");
     updateDisplay();
-    incrementTodos();
+    updateModel();
   }
 
   // manual controls
@@ -39,12 +40,21 @@
     updateDisplay();
   }
 
+  function buyPythonScript () {
+    if (productivity >= 3500 * pythonScripts * pythonScripts + 3500) {
+      productivity -= 3500 * pythonScripts * pythonScripts + 3500;
+      pythonScripts += 1;
+    }
+    updateDisplay();
+  }
+
   // update displays
   function updateDisplay () {
     displayNumTodos();
     displayProductivity();
     displayLegalPads();
     displayTodoApps();
+    displayPythonScripts();
   }
 
   function displayNumTodos () {
@@ -68,14 +78,32 @@
     let newString = todoApps + " todo apps";
     document.getElementById("todoApps").innerText = newString;
     document.getElementById("todoAppButton").disabled = productivity < todoApps * 35;
-    document.getElementById("todoAppButton").innerText = "install a todo app (" + todoApps + " productivity)";
+    document.getElementById("todoAppButton").innerText = "install a todo app (" + todoApps * 35 + " productivity)";
+  }
+
+  function displayPythonScripts () {
+    let newString = pythonScripts + " python scripts";
+    document.getElementById("pythonScripts").innerText = newString;
+    document.getElementById("pythonScriptButton").disabled = productivity < pythonScripts * pythonScripts + 3500;
+    document.getElementById("pythonScriptButton").innerText = "write a python app (" + (pythonScripts * pythonScripts + 3500) + " productivity)";
   }
 
   // update model
+  function updateModel () {
+    incrementTodos();
+    incrementProductivity();
+  }
+
   function incrementTodos () {
     numTodos++;
     numTodos += legalPads;
     numTodos += todoApps * 5;
+  }
+
+  function incrementProductivity () {
+    if (productivity > 0) {
+        productivity += Math.floor(Math.log(productivity)) * pythonScripts;
+    }
   }
   </script>
 </head>
@@ -85,7 +113,7 @@
   <div id="productivity"></div>
   <button onclick="userClick()">push</button>
   <div>
-    <div><b>Helpers</b></div>
+    <div><b>Todo Generators</b></div>
     <div>
       <div id="legalPads"></div>
       <button id="legalPadButton" onclick="buyLegalPad()"></button>
@@ -93,6 +121,13 @@
     <div>
       <div id="todoApps"></div>
       <button id="todoAppButton" onclick="buyTodoApp()"></button>
+    </div>
+  </div>
+  <div>
+    <div><b>Productivity Booststers</b></div>
+    <div>
+      <div id="pythonScripts"></div>
+      <button id="pythonScriptButton" onclick="buyPythonScript()"></button>
     </div>
   </div>
 </body>
