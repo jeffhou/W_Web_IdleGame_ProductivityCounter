@@ -8,7 +8,7 @@
   var legalPads = 0;
   var todoApps = 0;
   var pythonScripts = 0;
-
+  var clumsyMultitasking = 0
   function tick () {
     console.log("tick");
     updateDisplay();
@@ -18,8 +18,12 @@
   // manual controls
   function userClick () {
     if (numTodos > 0) {
-      numTodos -= 1;
-      productivity += 1;
+      if (numTodos > 5 * clumsyMultitasking * clumsyMultitasking + 1) {
+        numTodos -= 5 * clumsyMultitasking * clumsyMultitasking + 1;
+        productivity += 5 * clumsyMultitasking + 1;
+      } else {
+        numTodos = 0;
+      }
     }
     updateDisplay();
   }
@@ -48,6 +52,14 @@
     updateDisplay();
   }
 
+  function buyClumsyMultitasking () {
+    if (productivity >= 100 * clumsyMultitasking * clumsyMultitasking + 100) {
+      productivity -= 100 * clumsyMultitasking * clumsyMultitasking + 100;
+      clumsyMultitasking += 1;
+    }
+    updateDisplay();
+  }
+
   // update displays
   function updateDisplay () {
     displayNumTodos();
@@ -55,6 +67,7 @@
     displayLegalPads();
     displayTodoApps();
     displayPythonScripts();
+    displayClumsyMultitasking();
   }
 
   function displayNumTodos () {
@@ -88,6 +101,13 @@
     document.getElementById("pythonScriptButton").innerText = "write a python app (" + (pythonScripts * pythonScripts + 3500) + " productivity)";
   }
 
+  function displayClumsyMultitasking () {
+    let newString = "level " + clumsyMultitasking + " of clumsy multitasking";
+    document.getElementById("clumsyMultitasking").innerText = newString;
+    document.getElementById("clumsyMultitaskingButton").disabled = productivity < 100 * clumsyMultitasking * clumsyMultitasking + 100;
+    document.getElementById("clumsyMultitaskingButton").innerText = "write a python app (" + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
+  }
+
   // update model
   function updateModel () {
     incrementTodos();
@@ -112,6 +132,7 @@
   <div id="numTodos"></div>
   <div id="productivity"></div>
   <button onclick="userClick()">push</button>
+
   <div>
     <div><b>Todo Generators</b></div>
     <div>
@@ -123,6 +144,7 @@
       <button id="todoAppButton" onclick="buyTodoApp()"></button>
     </div>
   </div>
+
   <div>
     <div><b>Productivity Booststers</b></div>
     <div>
@@ -130,6 +152,15 @@
       <button id="pythonScriptButton" onclick="buyPythonScript()"></button>
     </div>
   </div>
+
+  <div>
+    <div><b>Productivity Skills</b></div>
+    <div>
+      <div id="clumsyMultitasking"></div>
+      <button id="clumsyMultitaskingButton" onclick="buyClumsyMultitasking()"></button>
+    </div>
+  </div>
+
 </body>
 
 </html>
