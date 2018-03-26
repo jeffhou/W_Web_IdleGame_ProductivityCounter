@@ -6,6 +6,7 @@
   var numTodos = 0;
   var productivity = 0;
   var legalPads = 0;
+  var todoApps = 0;
 
   function tick () {
     console.log("tick");
@@ -30,11 +31,20 @@
     updateDisplay();
   }
 
+  function buyTodoApp () {
+    if (productivity >= todoApps * 35) {
+      productivity -= todoApps * 35;
+      todoApps += 1;
+    }
+    updateDisplay();
+  }
+
   // update displays
   function updateDisplay () {
     displayNumTodos();
     displayProductivity();
     displayLegalPads();
+    displayTodoApps();
   }
 
   function displayNumTodos () {
@@ -54,13 +64,22 @@
     document.getElementById("legalPadButton").innerText = "buy a legal pad (" + legalPads + " productivity)";
   }
 
+  function displayTodoApps () {
+    let newString = todoApps + " todo apps";
+    document.getElementById("todoApps").innerText = newString;
+    document.getElementById("todoAppButton").disabled = productivity < todoApps * 35;
+    document.getElementById("todoAppButton").innerText = "install a todo app (" + todoApps + " productivity)";
+  }
+
   // update model
   function incrementTodos () {
     numTodos++;
     numTodos += legalPads;
+    numTodos += todoApps * 5;
   }
   </script>
 </head>
+
 <body>
   <div id="numTodos"></div>
   <div id="productivity"></div>
@@ -71,9 +90,11 @@
       <div id="legalPads"></div>
       <button id="legalPadButton" onclick="buyLegalPad()"></button>
     </div>
-    <div></div>
-    <div></div>
-    <div></div>
+    <div>
+      <div id="todoApps"></div>
+      <button id="todoAppButton" onclick="buyTodoApp()"></button>
+    </div>
   </div>
 </body>
+
 </html>
