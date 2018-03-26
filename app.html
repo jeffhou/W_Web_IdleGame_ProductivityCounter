@@ -1,0 +1,58 @@
+<html>
+<head>
+  <script>
+  window.setInterval(tick, 1000);
+
+  var numTodos = 0;
+  var productivity = 0;
+
+  function tick () {
+    console.log("tick");
+    updateDisplay();
+    incrementTodos();
+  }
+
+  // manual controls
+  function userClick () {
+    if (numTodos > 0) {
+      numTodos -= 1;
+      productivity += 1;
+    }
+    updateDisplay();
+  }
+
+  // update displays
+  function updateDisplay () {
+    displayNumTodos();
+    displayProductivity();
+  }
+  
+  function displayNumTodos () {
+    let newString = numTodos + " todos";
+    document.getElementById("numTodos").innerText = newString;
+  }
+
+  function displayProductivity () {
+    let newString = productivity + " productivity points";
+    document.getElementById("productivity").innerText = newString;
+  }
+
+  // update model
+  function incrementTodos () {
+    numTodos++;
+  }
+  </script>
+</head>
+<body>
+  <div id="numTodos"></div>
+  <div id="productivity"></div>
+  <button onclick="userClick()">push</button>
+  <div>
+    <div><b>Helpers</b></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</body>
+</html>
