@@ -1,14 +1,24 @@
 <html>
 <head>
-  <script>
-  window.setInterval(tick, 1000);
 
+  <style>
+  div {
+    margin-top: 1em;
+  }
+  </style>
+
+  <script>
+  var ticker = window.setInterval(tick, 100);
+  var startTime = new Date();
+  var endTime = null;
   var numTodos = 0;
   var productivity = 0;
   var legalPads = 0;
   var todoApps = 0;
   var pythonScripts = 0;
-  var clumsyMultitasking = 0
+  var clumsyMultitasking = 0;
+  var gameFinished = false;
+
   function tick () {
     console.log("tick");
     updateDisplay();
@@ -68,6 +78,7 @@
     displayTodoApps();
     displayPythonScripts();
     displayClumsyMultitasking();
+    displayWinGame();
   }
 
   function displayNumTodos () {
@@ -97,15 +108,19 @@
   function displayPythonScripts () {
     let newString = pythonScripts + " python scripts";
     document.getElementById("pythonScripts").innerText = newString;
-    document.getElementById("pythonScriptButton").disabled = productivity < pythonScripts * pythonScripts + 3500;
-    document.getElementById("pythonScriptButton").innerText = "write a python app (" + (pythonScripts * pythonScripts + 3500) + " productivity)";
+    document.getElementById("pythonScriptButton").disabled = productivity < 3500 * pythonScripts * pythonScripts + 3500;
+    document.getElementById("pythonScriptButton").innerText = "write a python app (" + (3500 * pythonScripts * pythonScripts + 3500) + " productivity)";
   }
 
   function displayClumsyMultitasking () {
     let newString = "level " + clumsyMultitasking + " of clumsy multitasking";
     document.getElementById("clumsyMultitasking").innerText = newString;
     document.getElementById("clumsyMultitaskingButton").disabled = productivity < 100 * clumsyMultitasking * clumsyMultitasking + 100;
-    document.getElementById("clumsyMultitaskingButton").innerText = "write a python app (" + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
+    document.getElementById("clumsyMultitaskingButton").innerText = "level up clumsy multitasking (" + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
+  }
+
+  function displayWinGame () {
+    document.getElementById("winGameButton").disabled = productivity < 1000000;
   }
 
   // update model
@@ -122,7 +137,25 @@
 
   function incrementProductivity () {
     if (productivity > 0) {
-        productivity += Math.floor(Math.log(productivity)) * pythonScripts;
+        let increment = Math.min(Math.floor(Math.log(productivity)) * pythonScripts, numTodos);
+        productivity += increment;
+        numTodos -= increment;
+    }
+  }
+
+  // endgame
+  function winGame () {
+    if (productivity >= 1000000) {
+      clearInterval(ticker);
+      var totalTime = (endTime - startTime);
+      var totalSeconds = Math.floor(totalTime / 1000);
+      var totalMinutes = Math.floor(totalSeconds / 60);
+      totalSeconds %= 60;
+      var totalHours = Math.floor(totalMinutes / 60);
+      totalMinutes %= 60;
+
+      document.getElementById("game-announcement").innerText = "YOU WERE SO PRODUCTIVE! NOW GO DO REAL WORK <3"
+      document.getElementById("game-announcement-footer").innerText = "YOU FINISHED IN " + totalHours + " HOURS MINUTES SECONDS"
     }
   }
   </script>
@@ -131,7 +164,7 @@
 <body>
   <div id="numTodos"></div>
   <div id="productivity"></div>
-  <button onclick="userClick()">push</button>
+  <button onclick="userClick()">complete task(s)</button>
 
   <div>
     <div><b>Todo Generators</b></div>
@@ -160,6 +193,13 @@
       <button id="clumsyMultitaskingButton" onclick="buyClumsyMultitasking()"></button>
     </div>
   </div>
+
+  <div>
+    <br />
+    <button id="winGameButton" onclick="winGame()">win game (1,000,000 productivity)</button>
+  </div>
+
+  <div id="game-announcement" style="font-weight: largest"></div>
 
 </body>
 
