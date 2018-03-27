@@ -12,7 +12,7 @@
   var startTime = new Date();
   var endTime = null;
   var numTodos = 0;
-  var productivity = 0;
+  var productivity = 999990;
   var legalPads = 0;
   var todoApps = 0;
   var pythonScripts = 0;
@@ -147,7 +147,8 @@
   function winGame () {
     if (productivity >= 1000000) {
       clearInterval(ticker);
-      var totalTime = (endTime - startTime);
+      var totalTime = (new Date() - startTime);
+      console.log(totalTime);
       var totalSeconds = Math.floor(totalTime / 1000);
       var totalMinutes = Math.floor(totalSeconds / 60);
       totalSeconds %= 60;
@@ -155,7 +156,7 @@
       totalMinutes %= 60;
 
       document.getElementById("game-announcement").innerText = "YOU WERE SO PRODUCTIVE! NOW GO DO REAL WORK <3"
-      document.getElementById("game-announcement-footer").innerText = "YOU FINISHED IN " + totalHours + " HOURS MINUTES SECONDS"
+      document.getElementById("game-announcement-footer").innerText = "YOU FINISHED IN " + totalHours + " HOURS " + totalMinutes + " MINUTES " + totalSeconds + " SECONDS"
     }
   }
   </script>
@@ -200,6 +201,7 @@
   </div>
 
   <div id="game-announcement" style="font-weight: largest"></div>
+  <div id="game-announcement-footer" style="font-weight: largest"></div>
 
 </body>
 
