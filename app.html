@@ -2,13 +2,50 @@
 <head>
 
   <style>
-  div {
-    margin-top: 1em;
-  }
+    .left {
+      vertical-align: top;
+      height: -webkit-fill-available;
+    }
+
+    .line-item, .right-task {
+      font-family: sans-serif;
+      display: block;
+      border-bottom: 1px solid gray;
+      padding: 10px 0px 10px 12px;
+    }
+
+    .right-task {
+      vertical-align: middle;
+      vertical-align: top;
+    }
+
+    .checkbox {
+      width: 0.8em;
+      height: 0.8em;
+      border-radius: 0.5em;
+      border: 1px solid black;
+      display: inline-block;
+      vertical-align: middle;
+      margin: auto 5px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+    .checkbox:hover {
+      color: skyblue;
+    }
+
+    .task-text {
+      display: inline-block; vertical-align: middle; margin-left: 5px;
+    }
+
+    :focus {
+      outline: none;
+    }
   </style>
 
   <script>
-  var ticker = window.setInterval(tick, 100);
+  var ticker = window.setInterval(tick, 1000);
   var startTime = new Date();
   var endTime = null;
   var numTodos = 0;
@@ -113,7 +150,7 @@
   }
 
   function displayClumsyMultitasking () {
-    let newString = "level " + clumsyMultitasking + " of clumsy multitasking";
+    let newString = clumsyMultitasking + " clumsy multitasking";
     document.getElementById("clumsyMultitasking").innerText = newString;
     document.getElementById("clumsyMultitaskingButton").disabled = productivity < 100 * clumsyMultitasking * clumsyMultitasking + 100;
     document.getElementById("clumsyMultitaskingButton").innerText = "level up clumsy multitasking (" + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
@@ -162,47 +199,55 @@
   </script>
 </head>
 
-<body>
-  <div id="numTodos"></div>
-  <div id="productivity"></div>
-  <button onclick="userClick()">complete task(s)</button>
+<body style="user-select: none;">
 
-  <div>
-    <div><b>Todo Generators</b></div>
-    <div>
-      <div id="legalPads"></div>
-      <button id="legalPadButton" onclick="buyLegalPad()"></button>
+  <div style="border-radius: 15px; border: 1px solid black; display: flex; margin: 20px; overflow: auto;">
+
+    <div class="left" style="display: inline-block; width: 250px; border-right: 1px solid gray">
+      <div style="font-size: 1.5em; font-family: sans-serif; font-weight: lighter; margin-left: 10px; margin-top: 20px; margin-bottom: 30px;">Productivity Counter</div>
+      <div id="numTodos" class="line-item" style="border-top: 1px solid gray"></div>
+      <div id="productivity" class="line-item"></div>
+      <div id="legalPads" class="line-item"></div>
+      <div id="todoApps" class="line-item"></div>
+      <div id="pythonScripts" class="line-item"></div>
+      <div id="clumsyMultitasking" class="line-item"></div>
+      <div style="margin: 20px auto; text-align: center;">
+        <button onclick="userClick()" style="background: white; border: 1px solid gray; padding: 10px 20px; cursor: pointer;">complete task(s)</button>
+      </div>
     </div>
-    <div>
-      <div id="todoApps"></div>
-      <button id="todoAppButton" onclick="buyTodoApp()"></button>
+
+    <div class="left" style="flex: 1; width: calc(100% - 270px);">
+      <img src="backdrop.jpg" style="width: 100%"/>
+      <div class="right-task" onclick="buyLegalPad()">
+        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="task-text" id="legalPadButton"></div>
+      </div>
+
+      <div class="right-task" onclick="buyTodoApp()">
+        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="task-text" id="todoAppButton"></div>
+      </div>
+
+      <div class="right-task" onclick="buyPythonScript()">
+        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="task-text" id="pythonScriptButton"></div>
+      </div>
+
+      <div class="right-task" onclick="buyClumsyMultitasking()">
+        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="task-text" id="clumsyMultitaskingButton"></div>
+      </div>
+
+      <div class="right-task" onclick="winGame()" id="winGameButton">
+        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="task-text">win game (1,000,000 productivity)</div>
+      </div>
     </div>
+
+    <div id="game-announcement" style="font-weight: largest"></div>
+    <div id="game-announcement-footer" style="font-weight: largest"></div>
+
   </div>
-
-  <div>
-    <div><b>Productivity Booststers</b></div>
-    <div>
-      <div id="pythonScripts"></div>
-      <button id="pythonScriptButton" onclick="buyPythonScript()"></button>
-    </div>
-  </div>
-
-  <div>
-    <div><b>Productivity Skills</b></div>
-    <div>
-      <div id="clumsyMultitasking"></div>
-      <button id="clumsyMultitaskingButton" onclick="buyClumsyMultitasking()"></button>
-    </div>
-  </div>
-
-  <div>
-    <br />
-    <button id="winGameButton" onclick="winGame()">win game (1,000,000 productivity)</button>
-  </div>
-
-  <div id="game-announcement" style="font-weight: largest"></div>
-  <div id="game-announcement-footer" style="font-weight: largest"></div>
-
 </body>
 
 </html>
