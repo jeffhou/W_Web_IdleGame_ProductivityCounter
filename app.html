@@ -45,6 +45,14 @@
       color: skyblue;
     }
 
+    .checkbox-check {
+      vertical-align: middle;
+      margin-top: -2px;
+      display: block;
+      font-size: 0.8em;
+      margin-left: 1px;
+    }
+
     .task-text {
       display: inline-block; vertical-align: middle; margin-left: 5px;
     }
@@ -67,7 +75,6 @@
   var gameFinished = false;
 
   function tick () {
-    console.log("tick");
     updateDisplay();
     updateModel();
   }
@@ -183,6 +190,7 @@
   }
 
   function incrementProductivity () {
+    productivity += 0.5;
     if (productivity > 0) {
         let increment = Math.min(Math.floor(Math.log(productivity)) * pythonScripts, numTodos);
         productivity += increment;
@@ -229,27 +237,28 @@
     <div class="left" style="flex: 1; width: calc(100% - 270px);">
       <img src="backdrop.jpg" style="width: 100%"/>
       <div class="right-task" onclick="buyLegalPad()">
-        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="checkbox"><span class="checkbox-check">✓</span></div>
         <div class="task-text" id="legalPadButton"></div>
       </div>
 
       <div class="right-task" onclick="buyTodoApp()">
-        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="checkbox"><span class="checkbox-check">✓</span></div>
         <div class="task-text" id="todoAppButton"></div>
       </div>
 
+
       <div class="right-task" onclick="buyClumsyMultitasking()">
-        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="checkbox"><span class="checkbox-check">✓</span></div>
         <div class="task-text" id="clumsyMultitaskingButton"></div>
       </div>
 
       <div class="right-task" onclick="buyPythonScript()">
-        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="checkbox"><span class="checkbox-check">✓</span></div>
         <div class="task-text" id="pythonScriptButton"></div>
       </div>
 
       <div class="right-task" onclick="winGame()" id="winGameButton">
-        <div class="checkbox"><span style="vertical-align: middle; margin-top: -2px; display: block; font-size: 0.8em; margin-left: 1px;">✓</span></div>
+        <div class="checkbox"><span class="checkbox-check">✓</span></div>
         <div class="task-text">win game (1,000,000 productivity)</div>
       </div>
     </div>
