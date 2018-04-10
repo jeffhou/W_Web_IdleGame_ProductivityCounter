@@ -9,7 +9,9 @@
 
     gtag('config', 'UA-117109353-1');
   </script>
-
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
   <style>
     .left {
@@ -59,6 +61,11 @@
 
     :focus {
       outline: none;
+    }
+
+    #right-panel {
+      flex: 1 1 0%;
+      width: calc(100% - 270px);
     }
   </style>
 
@@ -149,28 +156,28 @@
     let newString = legalPads + " legal pads";
     document.getElementById("legalPads").innerText = newString;
     document.getElementById("legalPadButton").disabled = productivity < legalPads;
-    document.getElementById("legalPadButton").innerText = "buy a legal pad (" + legalPads + " productivity)";
+    document.getElementById("legalPadButton").innerText = "buy a legal pad (costs " + legalPads + " productivity, generates 1 todo per tick)";
   }
 
   function displayTodoApps () {
     let newString = todoApps + " todo apps";
     document.getElementById("todoApps").innerText = newString;
     document.getElementById("todoAppButton").disabled = productivity < todoApps * 35;
-    document.getElementById("todoAppButton").innerText = "install a todo app (" + todoApps * 35 + " productivity)";
+    document.getElementById("todoAppButton").innerText = "install a todo app (costs " + todoApps * 35 + " productivity, generates 5 todo per tick)";
   }
 
   function displayPythonScripts () {
     let newString = pythonScripts + " python scripts";
     document.getElementById("pythonScripts").innerText = newString;
     document.getElementById("pythonScriptButton").disabled = productivity < 3500 * pythonScripts * pythonScripts + 3500;
-    document.getElementById("pythonScriptButton").innerText = "write a python app (" + (3500 * pythonScripts * pythonScripts + 3500) + " productivity)";
+    document.getElementById("pythonScriptButton").innerText = "write a python app (costs " + (3500 * pythonScripts * pythonScripts + 3500) + " productivity)";
   }
 
   function displayClumsyMultitasking () {
     let newString = clumsyMultitasking + " clumsy multitasking";
     document.getElementById("clumsyMultitasking").innerText = newString;
     document.getElementById("clumsyMultitaskingButton").disabled = productivity < 100 * clumsyMultitasking * clumsyMultitasking + 100;
-    document.getElementById("clumsyMultitaskingButton").innerText = "level up clumsy multitasking (" + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
+    document.getElementById("clumsyMultitaskingButton").innerText = "level up clumsy multitasking (costs " + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
   }
 
   function displayWinGame () {
@@ -218,7 +225,42 @@
 </head>
 
 <body style="user-select: none;">
+  <script type="text/babel">
 
+    function UpgradeItem (props) {
+      return (
+        <div className="right-task" onClick={ props.buy }>
+          <div className="checkbox"><span className="checkbox-check">✓</span></div>
+          <div className="task-text" id= { props.id + "Button"}></div>
+        </div>
+      )
+    }
+
+    function UpgradePanel (props) {
+      return (
+        <div className="left">
+          <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
+
+          <UpgradeItem buy={ buyLegalPad } id="legalPad" />
+          <UpgradeItem buy={ buyTodoApp } id="todoApp" />
+          <UpgradeItem buy={ buyClumsyMultitasking } id="clumsyMultitasking" />
+          <UpgradeItem buy={ buyPythonScript } id="pythonScript" />
+
+          <div className="right-task" onClick={ winGame } id="winGameButton">
+            <div className="checkbox"><span className="checkbox-check">✓</span></div>
+            <div className="task-text">win game (costs 1,000,000 productivity)</div>
+          </div>
+        </div>
+      )
+    }
+
+    ReactDOM.render(
+      <UpgradePanel />,
+      document.getElementById("right-panel")
+    )
+
+
+  </script>
   <div style="border-radius: 15px; border: 1px solid black; display: flex; margin: 20px; overflow: auto;">
 
     <div class="left" style="display: inline-block; width: 250px; border-right: 1px solid gray">
@@ -234,34 +276,7 @@
       </div>
     </div>
 
-    <div class="left" style="flex: 1; width: calc(100% - 270px);">
-      <img src="backdrop.jpg" style="width: 100%"/>
-      <div class="right-task" onclick="buyLegalPad()">
-        <div class="checkbox"><span class="checkbox-check">✓</span></div>
-        <div class="task-text" id="legalPadButton"></div>
-      </div>
-
-      <div class="right-task" onclick="buyTodoApp()">
-        <div class="checkbox"><span class="checkbox-check">✓</span></div>
-        <div class="task-text" id="todoAppButton"></div>
-      </div>
-
-
-      <div class="right-task" onclick="buyClumsyMultitasking()">
-        <div class="checkbox"><span class="checkbox-check">✓</span></div>
-        <div class="task-text" id="clumsyMultitaskingButton"></div>
-      </div>
-
-      <div class="right-task" onclick="buyPythonScript()">
-        <div class="checkbox"><span class="checkbox-check">✓</span></div>
-        <div class="task-text" id="pythonScriptButton"></div>
-      </div>
-
-      <div class="right-task" onclick="winGame()" id="winGameButton">
-        <div class="checkbox"><span class="checkbox-check">✓</span></div>
-        <div class="task-text">win game (1,000,000 productivity)</div>
-      </div>
-    </div>
+    <div id="right-panel"></div>
 
     <div id="game-announcement" style="font-weight: largest"></div>
     <div id="game-announcement-footer" style="font-weight: largest"></div>
