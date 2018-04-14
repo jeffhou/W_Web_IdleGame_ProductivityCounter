@@ -1,287 +1,219 @@
 <html>
-<head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117109353-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'UA-117109353-1');
-  </script>
-  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <head>
 
-  <style>
-    .left {
-      vertical-align: top;
-      height: -webkit-fill-available;
-    }
+    <!-- Import React -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    .line-item, .right-task {
-      font-family: sans-serif;
-      display: block;
-      border-bottom: 1px solid gray;
-      padding: 10px 0px 10px 12px;
-    }
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
 
-    .right-task {
-      vertical-align: middle;
-      vertical-align: top;
-    }
-
-    .checkbox {
-      width: 0.8em;
-      height: 0.8em;
-      border-radius: 0.5em;
-      border: 1px solid black;
-      display: inline-block;
-      vertical-align: middle;
-      margin: auto 5px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-    }
-    .checkbox:hover {
-      color: skyblue;
-    }
-
-    .checkbox-check {
-      vertical-align: middle;
-      margin-top: -2px;
-      display: block;
-      font-size: 0.8em;
-      margin-left: 1px;
-    }
-
-    .task-text {
-      display: inline-block; vertical-align: middle; margin-left: 5px;
-    }
-
-    :focus {
-      outline: none;
-    }
-
-    #right-panel {
-      flex: 1 1 0%;
-      width: calc(100% - 270px);
-    }
-  </style>
-
-  <script>
-  var ticker = window.setInterval(tick, 1000);
-  var startTime = new Date();
-  var endTime = null;
-  var numTodos = 0;
-  var productivity = 0;
-  var legalPads = 0;
-  var todoApps = 0;
-  var pythonScripts = 0;
-  var clumsyMultitasking = 0;
-  var gameFinished = false;
-
-  function tick () {
-    updateDisplay();
-    updateModel();
-  }
-
-  // manual controls
-  function userClick () {
-    if (numTodos > 0) {
-      if (numTodos > 5 * clumsyMultitasking * clumsyMultitasking + 1) {
-        numTodos -= 5 * clumsyMultitasking * clumsyMultitasking + 1;
-        productivity += 5 * clumsyMultitasking + 1;
-      } else {
-        numTodos = 0;
-      }
-    }
-    updateDisplay();
-  }
-
-  function buyLegalPad () {
-    if (productivity >= legalPads) {
-      productivity -= legalPads;
-      legalPads += 1;
-    }
-    updateDisplay();
-  }
-
-  function buyTodoApp () {
-    if (productivity >= todoApps * 35) {
-      productivity -= todoApps * 35;
-      todoApps += 1;
-    }
-    updateDisplay();
-  }
-
-  function buyPythonScript () {
-    if (productivity >= 3500 * pythonScripts * pythonScripts + 3500) {
-      productivity -= 3500 * pythonScripts * pythonScripts + 3500;
-      pythonScripts += 1;
-    }
-    updateDisplay();
-  }
-
-  function buyClumsyMultitasking () {
-    if (productivity >= 100 * clumsyMultitasking * clumsyMultitasking + 100) {
-      productivity -= 100 * clumsyMultitasking * clumsyMultitasking + 100;
-      clumsyMultitasking += 1;
-    }
-    updateDisplay();
-  }
-
-  // update displays
-  function updateDisplay () {
-    displayNumTodos();
-    displayProductivity();
-    displayLegalPads();
-    displayTodoApps();
-    displayPythonScripts();
-    displayClumsyMultitasking();
-    displayWinGame();
-  }
-
-  function displayNumTodos () {
-    let newString = numTodos + " todos";
-    document.getElementById("numTodos").innerText = newString;
-  }
-
-  function displayProductivity () {
-    let newString = productivity + " productivity points";
-    document.getElementById("productivity").innerText = newString;
-  }
-
-  function displayLegalPads () {
-    let newString = legalPads + " legal pads";
-    document.getElementById("legalPads").innerText = newString;
-    document.getElementById("legalPadButton").disabled = productivity < legalPads;
-    document.getElementById("legalPadButton").innerText = "buy a legal pad (costs " + legalPads + " productivity, generates 1 todo per tick)";
-  }
-
-  function displayTodoApps () {
-    let newString = todoApps + " todo apps";
-    document.getElementById("todoApps").innerText = newString;
-    document.getElementById("todoAppButton").disabled = productivity < todoApps * 35;
-    document.getElementById("todoAppButton").innerText = "install a todo app (costs " + todoApps * 35 + " productivity, generates 5 todo per tick)";
-  }
-
-  function displayPythonScripts () {
-    let newString = pythonScripts + " python scripts";
-    document.getElementById("pythonScripts").innerText = newString;
-    document.getElementById("pythonScriptButton").disabled = productivity < 3500 * pythonScripts * pythonScripts + 3500;
-    document.getElementById("pythonScriptButton").innerText = "write a python app (costs " + (3500 * pythonScripts * pythonScripts + 3500) + " productivity)";
-  }
-
-  function displayClumsyMultitasking () {
-    let newString = clumsyMultitasking + " clumsy multitasking";
-    document.getElementById("clumsyMultitasking").innerText = newString;
-    document.getElementById("clumsyMultitaskingButton").disabled = productivity < 100 * clumsyMultitasking * clumsyMultitasking + 100;
-    document.getElementById("clumsyMultitaskingButton").innerText = "level up clumsy multitasking (costs " + (100 * clumsyMultitasking * clumsyMultitasking + 100) + " productivity)";
-  }
-
-  function displayWinGame () {
-    document.getElementById("winGameButton").disabled = productivity < 1000000;
-  }
-
-  // update model
-  function updateModel () {
-    incrementTodos();
-    incrementProductivity();
-  }
-
-  function incrementTodos () {
-    numTodos++;
-    numTodos += legalPads;
-    numTodos += todoApps * 5;
-  }
-
-  function incrementProductivity () {
-    productivity += 0.5;
-    if (productivity > 0) {
-        let increment = Math.min(Math.floor(Math.log(productivity)) * pythonScripts, numTodos);
-        productivity += increment;
-        numTodos -= increment;
-    }
-  }
-
-  // endgame
-  function winGame () {
-    if (productivity >= 1000000) {
-      clearInterval(ticker);
-      var totalTime = (new Date() - startTime);
-      console.log(totalTime);
-      var totalSeconds = Math.floor(totalTime / 1000);
-      var totalMinutes = Math.floor(totalSeconds / 60);
-      totalSeconds %= 60;
-      var totalHours = Math.floor(totalMinutes / 60);
-      totalMinutes %= 60;
-
-      document.getElementById("game-announcement").innerText = "YOU WERE SO PRODUCTIVE! NOW GO DO REAL WORK <3"
-      document.getElementById("game-announcement-footer").innerText = "YOU FINISHED IN " + totalHours + " HOURS " + totalMinutes + " MINUTES " + totalSeconds + " SECONDS"
-    }
-  }
-  </script>
-</head>
-
-<body style="user-select: none;">
-  <script type="text/babel">
-
-    function UpgradeItem (props) {
-      return (
-        <div className="right-task" onClick={ props.buy }>
-          <div className="checkbox"><span className="checkbox-check">✓</span></div>
-          <div className="task-text" id= { props.id + "Button"}></div>
-        </div>
-      )
-    }
-
-    function UpgradePanel (props) {
-      return (
-        <div className="left">
-          <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
-
-          <UpgradeItem buy={ buyLegalPad } id="legalPad" />
-          <UpgradeItem buy={ buyTodoApp } id="todoApp" />
-          <UpgradeItem buy={ buyClumsyMultitasking } id="clumsyMultitasking" />
-          <UpgradeItem buy={ buyPythonScript } id="pythonScript" />
-
-          <div className="right-task" onClick={ winGame } id="winGameButton">
-            <div className="checkbox"><span className="checkbox-check">✓</span></div>
-            <div className="task-text">win game (costs 1,000,000 productivity)</div>
+  <body>
+    <script type="text/babel">
+      function ProductivityButton (props) {
+        return (
+          <div className="productivity-button">
+            <button onClick={props.click}>Click Me</button>
           </div>
-        </div>
+        )
+      }
+
+      function Stat (props) {
+        return (
+          <div className="stats-panel-item">{props.name}: {props.count}</div>
+        )
+      }
+
+      function Logo (props) {
+        return (
+          <div className="logo">Productivity Counter</div>
+        )
+      }
+
+      function StatsPanel (props) {
+        return (
+          <div className="stats-panel">
+            <Logo />
+            <Stat name="Tasks" count={props.tasksCount} />
+            <Stat name="Productivity" count={props.productivityCount} />
+            <Stat name="Legal Pads" count={props.legalPadsCount} />
+            <Stat name="Todo Apps" count={props.todoAppsCount} />
+            <Stat name="Python Scripts" count={props.pythonScriptsCount} />
+            <Stat name="Multitasking" count={props.multitaskingCount} />
+            <ProductivityButton click={props.click}/>
+          </div>
+        )
+      }
+
+      function UpgradeItem (props) {
+        return (
+          <div className="upgrade-item" onClick={ ()=>props.click() }>
+            <div className="task-text">{ props.text } (Costs { props.cost() } productivity.)</div>
+          </div>
+        )
+      }
+
+      function UpgradePanel (props) {
+        return (
+          <div className="upgrade-panel">
+            <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
+
+            <UpgradeItem click={ props.buyLegalPad } text="Buy Legal Pad" cost={ props.costLegalPad } />
+            <UpgradeItem click={ props.buyTodoApp } text="Install Todo App" cost={ props.costTodoApp } />
+            <UpgradeItem click={ props.buyMultitasking } text="Upgrade Multitasking" cost={ props.costMultitasking } />
+            <UpgradeItem click={ props.buyPythonScript } text="Build Python Script" cost={ props.costPythonScript } />
+          </div>
+        )
+      }
+
+      class App extends React.Component {
+        constructor (props) {
+          super(props)
+          this.state = {
+            tasksCount: 100,
+            productivityCount: 100,
+            legalPadsCount: 0,
+            todoAppsCount: 0,
+            pythonScriptsCount: 0,
+            multitaskingCount: 0,
+          }
+          this.tick = this.tick.bind(this)
+          this.click = this.click.bind(this)
+
+          /* bind buy functions */
+          this.buyLegalPad = this.buyLegalPad.bind(this)
+          this.buyTodoApp = this.buyTodoApp.bind(this)
+          this.buyMultitasking = this.buyMultitasking.bind(this)
+          this.buyPythonScript = this.buyPythonScript.bind(this)
+          /* bind cost functions */
+          this.costLegalPad = this.costLegalPad.bind(this)
+          this.costTodoApp = this.costTodoApp.bind(this)
+          this.costMultitasking = this.costMultitasking.bind(this)
+          this.costPythonScript = this.costPythonScript.bind(this)
+
+          window.setInterval(this.tick, 1000);
+        }
+
+        buyLegalPad () {
+            const cost = this.costLegalPad()
+            if (this.state.productivityCount >= cost) {
+              this.setState((currentState) => {
+                return {
+                  productivityCount: this.state.productivityCount - cost,
+                  legalPadsCount: currentState.legalPadsCount + 1
+                }
+              })
+            }
+        }
+
+        costLegalPad () {
+          return this.state.legalPadsCount + 1
+        }
+
+        buyTodoApp () {
+            const cost = this.costTodoApp()
+            if (this.state.productivityCount >= cost) {
+              this.setState((currentState) => {
+                return {
+                  productivityCount: this.state.productivityCount - cost,
+                  todoAppsCount: currentState.todoAppsCount + 1
+                }
+              })
+            }
+        }
+
+        costTodoApp () {
+          return this.state.todoAppsCount * 35 + 35
+        }
+
+        buyPythonScript () {
+            const cost = this.costPythonScript()
+            if (this.state.productivityCount >= cost) {
+              this.setState((currentState) => {
+                return {
+                  productivityCount: this.state.productivityCount - cost,
+                  pythonScriptsCount: currentState.pythonScriptsCount + 1
+                }
+              })
+            }
+        }
+
+        costPythonScript () {
+          return 3500 * this.state.pythonScriptsCount + 1000
+        }
+
+        buyMultitasking () {
+            const cost = this.costMultitasking()
+            if (this.state.productivityCount >= cost) {
+              this.setState((currentState) => {
+                return {
+                  productivityCount: this.state.productivityCount - cost,
+                  multitaskingCount: currentState.multitaskingCount + 1
+                }
+              })
+            }
+        }
+
+        costMultitasking () {
+          return 50 * this.state.multitaskingCount * this.state.multitaskingCount + 100
+        }
+
+        click () {
+          const conversion = Math.min(1 + this.state.multitaskingCount ** 2, this.state.tasksCount)
+          this.setState((currentState) => {
+            return {
+              tasksCount: currentState.tasksCount - conversion,
+              productivityCount: currentState.productivityCount + conversion,
+            }
+          })
+        }
+
+        tick () {
+          this.setState((currentState) => {
+            return {
+              tasksCount: currentState.tasksCount + 1 + currentState.legalPadsCount + 5 * currentState.todoAppsCount,
+              productivityCount: currentState.productivityCount + currentState.pythonScriptsCount ** 3
+            }
+          })
+        }
+
+        render () {
+          return (
+          <div className="app-container">
+
+            <StatsPanel
+              tasksCount = {this.state.tasksCount}
+              productivityCount = {this.state.productivityCount}
+              legalPadsCount = {this.state.legalPadsCount}
+              todoAppsCount = {this.state.todoAppsCount}
+              pythonScriptsCount = {this.state.pythonScriptsCount}
+              multitaskingCount = {this.state.multitaskingCount}
+              click = {this.click}
+              />
+
+            <UpgradePanel
+              buyLegalPad = {this.buyLegalPad}
+              buyTodoApp = {this.buyTodoApp}
+              buyPythonScript = {this.buyPythonScript}
+              buyMultitasking = {this.buyMultitasking}
+              costLegalPad = {this.costLegalPad}
+              costTodoApp = {this.costTodoApp}
+              costPythonScript = {this.costPythonScript}
+              costMultitasking = {this.costMultitasking}
+            />
+          </div>
+          )
+        }
+      }
+
+      ReactDOM.render(
+        <App />,
+        document.getElementById('app')
       )
-    }
-
-    ReactDOM.render(
-      <UpgradePanel />,
-      document.getElementById("right-panel")
-    )
-
-
-  </script>
-  <div style="border-radius: 15px; border: 1px solid black; display: flex; margin: 20px; overflow: auto;">
-
-    <div class="left" style="display: inline-block; width: 250px; border-right: 1px solid gray">
-      <div style="font-size: 1.5em; font-family: sans-serif; font-weight: lighter; margin-left: 10px; margin-top: 20px; margin-bottom: 30px;">Productivity Counter</div>
-      <div id="numTodos" class="line-item" style="border-top: 1px solid gray"></div>
-      <div id="productivity" class="line-item"></div>
-      <div id="legalPads" class="line-item"></div>
-      <div id="todoApps" class="line-item"></div>
-      <div id="clumsyMultitasking" class="line-item"></div>
-      <div id="pythonScripts" class="line-item"></div>
-      <div style="margin: 20px auto; text-align: center;">
-        <button onclick="userClick()" style="background: white; border: 1px solid gray; padding: 10px 20px; cursor: pointer;">complete task(s)</button>
-      </div>
-    </div>
-
-    <div id="right-panel"></div>
-
-    <div id="game-announcement" style="font-weight: largest"></div>
-    <div id="game-announcement-footer" style="font-weight: largest"></div>
-
-  </div>
-</body>
+    </script>
+    <div id="app"></app>
+  </body>
 
 </html>
