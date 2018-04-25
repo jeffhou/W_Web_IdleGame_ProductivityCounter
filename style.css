@@ -1,3 +1,7 @@
+body {
+  user-select: none;
+}
+
 .app-container {
   border-radius: 15px;
   border: 1px solid black;
@@ -18,14 +22,13 @@
 .upgrade-panel {
   display: inline-block;
   width: 250px;
-  border-right: 1px solid gray;
   flex: 1 1 0%;
 }
 
 .upgrade-item {
   display: block;
   padding: 10px;
-  border: 1px solid black
+  border-bottom: 1px solid black;
 }
 
 .stats-panel {
