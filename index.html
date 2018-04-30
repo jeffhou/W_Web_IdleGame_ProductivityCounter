@@ -22,6 +22,12 @@
       }
     }
 
+    function generateItemFromItem (item) {
+      let newItem = generateItem(item.name, item.cost, item.impact)
+      newItem.count = item.count
+      return newItem
+    }
+
       function ProductivityButton (props) {
         return (
           <div className="productivity-button">
@@ -54,10 +60,9 @@
             <Logo />
             <Stat name="Tasks" count={props.tasksCount} />
             <Stat name="Productivity" count={props.productivityCount} />
-            <AdvancedStat item={props.items['Legal Pads']} />
-            <AdvancedStat item={props.items['Todo Apps']} />
-            <AdvancedStat item={props.items['Multitasking']} />
-            <AdvancedStat item={props.items['Python Scripts']} />
+            {props.items.map((item) => (
+              <AdvancedStat item={ item } key={ item.name + 'stat'} />
+            ))}
             <ProductivityButton click={props.click}/>
           </div>
         )
@@ -66,7 +71,9 @@
       function UpgradeItem (props) {
         return (
           <div className="upgrade-item" onClick={ () => props.buyItem(props.item) }>
-            <div className="task-text">{ props.item.name } (Costs { props.item.cost(props.item) } productivity.)</div>
+            <div className="task-text">
+              { props.item.name } (Costs { props.item.cost(props.item) } productivity.)
+            </div>
           </div>
         )
       }
@@ -75,10 +82,9 @@
         return (
           <div className="upgrade-panel">
             <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
-            <UpgradeItem item={ props.items['Legal Pads'] } buyItem={ props.buyItem } />
-            <UpgradeItem item={ props.items['Todo Apps'] } buyItem={ props.buyItem } />
-            <UpgradeItem item={ props.items['Multitasking'] } buyItem={ props.buyItem } />
-            <UpgradeItem item={ props.items['Python Scripts'] } buyItem={ props.buyItem } />
+            {props.items.map((item) => (
+              <UpgradeItem item={ item } buyItem={ props.buyItem } key={ item.name + 'upgrade'} />
+            ))}
           </div>
         )
       }
@@ -89,36 +95,36 @@
           this.state = {
             tasksCount: 100,
             productivityCount: 100,
-            items: {
-              'Legal Pads': generateItem(
+            items: [
+              generateItem(
                 'Legal Pads',
                 item => item.count + 1,
                 item => {
                   return { tasks: item.count }
                 },
               ),
-              'Todo Apps': generateItem(
+              generateItem(
                 'Todo Apps',
                 item => item.count * 35 + 35,
                 item => {
                   return { tasks: item.count * 5 }
                 },
               ),
-              'Multitasking': generateItem(
+              generateItem(
                 'Multitasking',
                 item => 50 * item.count ** 2 + 100,
                 item => {
                   return {}
                 },
               ),
-              'Python Scripts': generateItem(
+              generateItem(
                 'Python Scripts',
                 item => item.count * 3500 + 1000,
                 item => {
                   return { productivity: item.count ** 3 }
                 },
               ),
-            }
+            ]
           }
           this.tick = this.tick.bind(this)
           this.click = this.click.bind(this)
@@ -132,15 +138,13 @@
           if (this.state.productivityCount >= cost) {
             this.setState((currentState) => {
               // clone dictionary
-              let items = {}
-              for (let item in currentState.items) {
-                items[item] = {}
-                for (let itemParameter in currentState.items[item]) {
-                  items[item][itemParameter] = currentState.items[item][itemParameter]
-                  if (item == itemType.name && itemParameter == 'count') {
-                    items[item][itemParameter] += 1
-                  }
+              let items = []
+              for (let i = 0; i < currentState.items.length; i++) {
+                let item = generateItemFromItem(currentState.items[i])
+                if (item.name == itemType.name) {
+                  item.count += 1
                 }
+                items.push(item)
               }
 
               return {
@@ -151,8 +155,17 @@
           }
         }
 
+        getItemByName (name) {
+          for (let i = 0; i < this.state.items.length; i++) {
+            if (this.state.items[i].name == name) {
+              return this.state.items[i]
+            }
+          }
+          return null
+        }
+
         click () {
-          const conversion = Math.min(1 + this.state.items["Multitasking"].count ** 2, this.state.tasksCount)
+          const conversion = Math.min(1 + this.getItemByName("Multitasking").count ** 2, this.state.tasksCount)
           this.setState((currentState) => {
             return {
               tasksCount: currentState.tasksCount - conversion,
@@ -166,12 +179,12 @@
             var newTasksCount = currentState.tasksCount + 1
             var newProductivityCount = currentState.productivityCount
 
-            for (let item in currentState.items) {
-              if (currentState.items[item].impact(currentState.items[item]).tasks) {
-                newTasksCount += currentState.items[item].impact(currentState.items[item]).tasks
+            for (let i = 0; i < currentState.items.length; i++) {
+              if (currentState.items[i].impact(currentState.items[i]).tasks) {
+                newTasksCount += currentState.items[i].impact(currentState.items[i]).tasks
               }
-              if (currentState.items[item].impact(currentState.items[item]).productivity) {
-                newProductivityCount += currentState.items[item].impact(currentState.items[item]).productivity
+              if (currentState.items[i].impact(currentState.items[i]).productivity) {
+                newProductivityCount += currentState.items[i].impact(currentState.items[i]).productivity
               }
             }
 
