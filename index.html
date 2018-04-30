@@ -127,18 +127,17 @@
           window.setInterval(this.tick, 1000);
         }
 
-        buyItem (item) {
-          const cost = item.cost(item)
+        buyItem (itemType) {
+          const cost = itemType.cost(itemType)
           if (this.state.productivityCount >= cost) {
             this.setState((currentState) => {
-
               // clone dictionary
               let items = {}
               for (let item in currentState.items) {
                 items[item] = {}
                 for (let itemParameter in currentState.items[item]) {
                   items[item][itemParameter] = currentState.items[item][itemParameter]
-                  if (item == item.name && itemParameter == 'count') {
+                  if (item == itemType.name && itemParameter == 'count') {
                     items[item][itemParameter] += 1
                   }
                 }
