@@ -1,0 +1,22 @@
+{
+  "name": "productivity-counter",
+  "version": "1.0.0",
+  "description": "What's better than having fun *and* being productive?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffhou/Productivity-Counter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffhou/Productivity-Counter/issues"
+  },
+  "homepage": "https://github.com/jeffhou/Productivity-Counter#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  }
+}
