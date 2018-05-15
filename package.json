@@ -4,7 +4,8 @@
   "description": "What's better than having fun *and* being productive?",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel app.js -o compiled_app.js"
   },
   "repository": {
     "type": "git",

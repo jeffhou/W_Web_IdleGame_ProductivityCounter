@@ -11,10 +11,10 @@ if ("savedGame" in localStorage && savedGame.version >= MIN_VERSION) {
 
 function generateItem (name, costFunction, impactFunction, count) {
     return {
-    count: count,
-    name: name,
-    cost: costFunction,
-    impact: impactFunction,
+        count: count,
+        name: name,
+        cost: costFunction,
+        impact: impactFunction,
     }
 }
 
@@ -24,33 +24,33 @@ function generateItemFromItem (item) {
     return newItem
 }
 
-    function ProductivityButton (props) {
+function ProductivityButton (props) {
     return (
         <div className="productivity-button">
         <button onClick={props.click}>Complete Task(s)</button>
         </div>
     )
-    }
+}
 
-    function Stat (props) {
+function Stat (props) {
     return (
         <div className="stats-panel-item">{props.name}: {props.count}</div>
     )
-    }
+}
 
-    function AdvancedStat (props) {
+function AdvancedStat (props) {
     return (
         <div className="stats-panel-item">{props.item.name}: {props.item.count}</div>
     )
-    }
+}
 
-    function Logo (props) {
+function Logo (props) {
     return (
         <div className="logo">Productivity Counter</div>
     )
-    }
+}
 
-    function StatsPanel (props) {
+function StatsPanel (props) {
     return (
         <div className="stats-panel">
         <Logo />
@@ -62,9 +62,9 @@ function generateItemFromItem (item) {
         <ProductivityButton click={props.click}/>
         </div>
     )
-    }
+}
 
-    function UpgradeItem (props) {
+function UpgradeItem (props) {
     return (
         <div className="upgrade-item" onClick={ () => props.buyItem(props.item) }>
         <div className="task-text">
@@ -72,9 +72,9 @@ function generateItemFromItem (item) {
         </div>
         </div>
     )
-    }
+}
 
-    function UpgradePanel (props) {
+function UpgradePanel (props) {
     return (
         <div className="upgrade-panel">
         <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
@@ -83,48 +83,48 @@ function generateItemFromItem (item) {
         ))}
         </div>
     )
-    }
+}
 
-    class App extends React.Component {
+class App extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-        tasksCount: stats[0] || 100,
-        productivityCount: stats[1] || 100,
-        items: [
-            generateItem(
-            'Legal Pads',
-            item => item.count + 1,
-            item => {
-                return { tasks: item.count }
-            },
-            stats[2],
-            ),
-            generateItem(
-            'Todo Apps',
-            item => item.count * 35 + 35,
-            item => {
-                return { tasks: item.count * 5 }
-            },
-            stats[3],
-            ),
-            generateItem(
-            'Multitasking',
-            item => 50 * item.count ** 2 + 100,
-            item => {
-                return {}
-            },
-            stats[4],
-            ),
-            generateItem(
-            'Python Scripts',
-            item => item.count * 3500 + 1000,
-            item => {
-                return { productivity: item.count ** 3 }
-            },
-            stats[5],
-            ),
-        ]
+            tasksCount: stats[0] || 100,
+            productivityCount: stats[1] || 100,
+            items: [
+                generateItem(
+                    'Legal Pads',
+                    item => item.count + 1,
+                    item => {
+                        return { tasks: item.count }
+                    },
+                    stats[2],
+                ),
+                generateItem(
+                    'Todo Apps',
+                    item => item.count * 35 + 35,
+                    item => {
+                        return { tasks: item.count * 5 }
+                    },
+                    stats[3],
+                ),
+                generateItem(
+                    'Multitasking',
+                    item => 50 * item.count ** 2 + 100,
+                    item => {
+                        return {}
+                    },
+                    stats[4],
+                ),
+                generateItem(
+                    'Python Scripts',
+                    item => item.count * 3500 + 1000,
+                    item => {
+                        return { productivity: item.count ** 3 }
+                    },
+                    stats[5],
+                ),
+            ]
         }
         this.tick = this.tick.bind(this)
         this.click = this.click.bind(this)
@@ -140,16 +140,16 @@ function generateItemFromItem (item) {
             // clone dictionary
             let items = []
             for (let i = 0; i < currentState.items.length; i++) {
-            let item = generateItemFromItem(currentState.items[i])
-            if (item.name == itemType.name) {
-                item.count += 1
-            }
-            items.push(item)
+                let item = generateItemFromItem(currentState.items[i])
+                if (item.name == itemType.name) {
+                    item.count += 1
+                }
+                items.push(item)
             }
 
             return {
-            productivityCount: this.state.productivityCount - cost,
-            items: items
+                productivityCount: this.state.productivityCount - cost,
+                items: items
             }
         })
         }
@@ -157,9 +157,9 @@ function generateItemFromItem (item) {
 
     getItemByName (name) {
         for (let i = 0; i < this.state.items.length; i++) {
-        if (this.state.items[i].name == name) {
-            return this.state.items[i]
-        }
+            if (this.state.items[i].name == name) {
+                return this.state.items[i]
+            }
         }
         return null
     }
@@ -167,44 +167,44 @@ function generateItemFromItem (item) {
     click () {
         const conversion = Math.min(1 + this.getItemByName("Multitasking").count ** 2, this.state.tasksCount)
         this.setState((currentState) => {
-        return {
-            tasksCount: currentState.tasksCount - conversion,
-            productivityCount: currentState.productivityCount + conversion,
-        }
+            return {
+                tasksCount: currentState.tasksCount - conversion,
+                productivityCount: currentState.productivityCount + conversion,
+            }
         })
     }
 
     tick () {
         counter += 1
         if (counter % 15 == 0) {
-        let stats = [
-            this.state.tasksCount,
-            this.state.productivityCount
-        ].concat(this.state.items.map(item => item.count));
+            let stats = [
+                this.state.tasksCount,
+                this.state.productivityCount
+            ].concat(this.state.items.map(item => item.count));
 
-        localStorage.setItem("savedGame", JSON.stringify({
-            version: VERSION,
-            stats: stats
-        }))
+            localStorage.setItem("savedGame", JSON.stringify({
+                version: VERSION,
+                stats: stats
+            }))
         }
 
         this.setState((currentState) => {
-        var newTasksCount = currentState.tasksCount + 1
-        var newProductivityCount = currentState.productivityCount
+            var newTasksCount = currentState.tasksCount + 1
+            var newProductivityCount = currentState.productivityCount
 
-        for (let i = 0; i < currentState.items.length; i++) {
-            if (currentState.items[i].impact(currentState.items[i]).tasks) {
-            newTasksCount += currentState.items[i].impact(currentState.items[i]).tasks
+            for (let i = 0; i < currentState.items.length; i++) {
+                if (currentState.items[i].impact(currentState.items[i]).tasks) {
+                    newTasksCount += currentState.items[i].impact(currentState.items[i]).tasks
+                }
+                if (currentState.items[i].impact(currentState.items[i]).productivity) {
+                    newProductivityCount += currentState.items[i].impact(currentState.items[i]).productivity
+                }
             }
-            if (currentState.items[i].impact(currentState.items[i]).productivity) {
-            newProductivityCount += currentState.items[i].impact(currentState.items[i]).productivity
-            }
-        }
 
-        return {
-            tasksCount: newTasksCount,
-            productivityCount: newProductivityCount,
-        }
+            return {
+                tasksCount: newTasksCount,
+                productivityCount: newProductivityCount,
+            }
         })
     }
 
