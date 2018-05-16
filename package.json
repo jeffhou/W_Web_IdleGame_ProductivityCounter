@@ -4,7 +4,8 @@
   "description": "What's better than having fun *and* being productive?",
   "main": "app.js",
   "scripts": {
-    "build": "babel app.js -o compiled_app.js"
+    "deploy": "babel app.js -o compiled_app.js && python3 -m http.server",
+    "commit": "babel app.js -o compiled_app.js && git add -p && git commit"
   },
   "repository": {
     "type": "git",

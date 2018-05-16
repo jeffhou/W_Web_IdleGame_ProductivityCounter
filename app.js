@@ -1,15 +1,29 @@
 var counter = 0;
-const VERSION = [3, 4, 0]
-const MIN_VERSION = [3, 4, 0]
+const VERSION = [3, 5, 0]
+const MIN_VERSION = [3, 5, 0]
 
-var stats = [0, 0, 0, 0, 0, 0]
-
-var savedGame = JSON.parse(localStorage.getItem("savedGame"))
-if ("savedGame" in localStorage && savedGame.version >= MIN_VERSION) {
-    stats = savedGame.stats
+function SaveGameJSONHelper (property, value) {
+    if (typeof(value) == 'function') {
+        return undefined
+    }
+    return value
 }
 
-function generateItem (name, costFunction, impactFunction, count) {
+var savedGame = null;
+if ("savedGame" in localStorage) {
+    let data = JSON.parse(localStorage.getItem("savedGame"))
+    if (data.version >= MIN_VERSION) {
+        savedGame = data.state
+        let itemCounts = {};
+        for (let i = 0; i < savedGame.items.length; i++) {
+            itemCounts[savedGame.items[i].name] = savedGame.items[i].count
+        }
+        savedGame.items = itemCounts
+    }
+}
+
+function generateItem (name, costFunction, impactFunction) {
+    let count = savedGame ? savedGame.items[name] : 0
     return {
         count: count,
         name: name,
@@ -53,13 +67,13 @@ function Logo (props) {
 function StatsPanel (props) {
     return (
         <div className="stats-panel">
-        <Logo />
-        <Stat name="Tasks" count={props.tasksCount} />
-        <Stat name="Productivity" count={props.productivityCount} />
-        {props.items.map((item) => (
-            <AdvancedStat item={ item } key={ item.name + 'stat'} />
-        ))}
-        <ProductivityButton click={props.click}/>
+            <Logo />
+            <Stat name="Tasks" count={props.tasksCount} />
+            <Stat name="Productivity" count={props.productivityCount} />
+            {props.items.map((item) => (
+                <AdvancedStat item={ item } key={ item.name + 'stat'} />
+            ))}
+            <ProductivityButton click={props.click}/>
         </div>
     )
 }
@@ -67,9 +81,9 @@ function StatsPanel (props) {
 function UpgradeItem (props) {
     return (
         <div className="upgrade-item" onClick={ () => props.buyItem(props.item) }>
-        <div className="task-text">
-            { props.item.name } (Costs { props.item.cost(props.item) } productivity.)
-        </div>
+            <div className="task-text">
+                { props.item.name } (Costs { props.item.cost(props.item) } productivity.)
+            </div>
         </div>
     )
 }
@@ -77,10 +91,10 @@ function UpgradeItem (props) {
 function UpgradePanel (props) {
     return (
         <div className="upgrade-panel">
-        <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
-        {props.items.map((item) => (
-            <UpgradeItem item={ item } buyItem={ props.buyItem } key={ item.name + 'upgrade'} />
-        ))}
+            <img src="backdrop.jpg" style={{width: 100 + "%"}}/>
+            {props.items.map((item) => (
+                <UpgradeItem item={ item } buyItem={ props.buyItem } key={ item.name + 'upgrade'} />
+            ))}
         </div>
     )
 }
@@ -88,44 +102,7 @@ function UpgradePanel (props) {
 class App extends React.Component {
     constructor (props) {
         super(props)
-        this.state = {
-            tasksCount: stats[0] || 100,
-            productivityCount: stats[1] || 100,
-            items: [
-                generateItem(
-                    'Legal Pads',
-                    item => item.count + 1,
-                    item => {
-                        return { tasks: item.count }
-                    },
-                    stats[2],
-                ),
-                generateItem(
-                    'Todo Apps',
-                    item => item.count * 35 + 35,
-                    item => {
-                        return { tasks: item.count * 5 }
-                    },
-                    stats[3],
-                ),
-                generateItem(
-                    'Multitasking',
-                    item => 50 * item.count ** 2 + 100,
-                    item => {
-                        return {}
-                    },
-                    stats[4],
-                ),
-                generateItem(
-                    'Python Scripts',
-                    item => item.count * 3500 + 1000,
-                    item => {
-                        return { productivity: item.count ** 3 }
-                    },
-                    stats[5],
-                ),
-            ]
-        }
+        this.generateState();
         this.tick = this.tick.bind(this)
         this.click = this.click.bind(this)
         this.buyItem = this.buyItem.bind(this)
@@ -133,26 +110,73 @@ class App extends React.Component {
         window.setInterval(this.tick, 1000);
     }
 
+    generateState () {
+        let tasksCount = savedGame ? savedGame.tasksCount : 100
+        let productivityCount = savedGame ? savedGame.productivityCount : 100
+        this.state = {
+            tasksCount,
+            productivityCount,
+            items: [
+                generateItem(
+                    'Legal Pads',
+                    item => item.count + 1,
+                    item => {
+                        return { tasks: item.count }
+                    },
+                ),
+                generateItem(
+                    'Todo Apps',
+                    item => item.count * 35 + 35,
+                    item => {
+                        return { tasks: item.count * 5 }
+                    },
+                ),
+                generateItem(
+                    'Multitasking',
+                    item => 50 * item.count ** 2 + 100,
+                    item => {
+                        return {}
+                    },
+                ),
+                generateItem(
+                    'Python Scripts',
+                    item => item.count * 3500 + 1000,
+                    item => {
+                        return { productivity: item.count ** 3 }
+                    },
+                ),
+            ]
+        }
+    }
+
     buyItem (itemType) {
         const cost = itemType.cost(itemType)
         if (this.state.productivityCount >= cost) {
+            this.setItemCount(itemType, 1)
+            this.setState((currentState) => {
+                return {
+                    productivityCount: this.state.productivityCount - cost,
+                }
+            })
+        }
+    }
+
+    setItemCount (itemType, count, increment=false) {
         this.setState((currentState) => {
             // clone dictionary
             let items = []
             for (let i = 0; i < currentState.items.length; i++) {
                 let item = generateItemFromItem(currentState.items[i])
                 if (item.name == itemType.name) {
-                    item.count += 1
+                    item.count = increment ? item.count + count: item.count
                 }
                 items.push(item)
             }
 
             return {
-                productivityCount: this.state.productivityCount - cost,
                 items: items
             }
         })
-        }
     }
 
     getItemByName (name) {
@@ -174,18 +198,17 @@ class App extends React.Component {
         })
     }
 
+    saveGame () {
+        localStorage.setItem("savedGame", JSON.stringify({
+            version: VERSION,
+            state: this.state
+        }, SaveGameJSONHelper))
+    }
+
     tick () {
         counter += 1
-        if (counter % 15 == 0) {
-            let stats = [
-                this.state.tasksCount,
-                this.state.productivityCount
-            ].concat(this.state.items.map(item => item.count));
-
-            localStorage.setItem("savedGame", JSON.stringify({
-                version: VERSION,
-                stats: stats
-            }))
+        if (counter % 30 == 1) {
+            this.saveGame()
         }
 
         this.setState((currentState) => {

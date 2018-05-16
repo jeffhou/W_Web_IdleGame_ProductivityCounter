@@ -1,5 +1,5 @@
 "use strict";
-console.log('asdf');
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9,17 +9,31 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var counter = 0;
-var VERSION = [3, 4, 0];
-var MIN_VERSION = [3, 4, 0];
+var VERSION = [3, 5, 0];
+var MIN_VERSION = [3, 5, 0];
 
-var stats = [0, 0, 0, 0, 0, 0];
-
-var savedGame = JSON.parse(localStorage.getItem("savedGame"));
-if ("savedGame" in localStorage && savedGame.version >= MIN_VERSION) {
-    stats = savedGame.stats;
+function SaveGameJSONHelper(property, value) {
+    if (typeof value == 'function') {
+        return undefined;
+    }
+    return value;
 }
 
-function generateItem(name, costFunction, impactFunction, count) {
+var savedGame = null;
+if ("savedGame" in localStorage) {
+    var data = JSON.parse(localStorage.getItem("savedGame"));
+    if (data.version >= MIN_VERSION) {
+        savedGame = data.state;
+        var itemCounts = {};
+        for (var i = 0; i < savedGame.items.length; i++) {
+            itemCounts[savedGame.items[i].name] = savedGame.items[i].count;
+        }
+        savedGame.items = itemCounts;
+    }
+}
+
+function generateItem(name, costFunction, impactFunction) {
+    var count = savedGame ? savedGame.items[name] : 0;
     return {
         count: count,
         name: name,
@@ -124,27 +138,7 @@ var App = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-        _this.state = {
-            tasksCount: stats[0] || 100,
-            productivityCount: stats[1] || 100,
-            items: [generateItem('Legal Pads', function (item) {
-                return item.count + 1;
-            }, function (item) {
-                return { tasks: item.count };
-            }, stats[2]), generateItem('Todo Apps', function (item) {
-                return item.count * 35 + 35;
-            }, function (item) {
-                return { tasks: item.count * 5 };
-            }, stats[3]), generateItem('Multitasking', function (item) {
-                return 50 * Math.pow(item.count, 2) + 100;
-            }, function (item) {
-                return {};
-            }, stats[4]), generateItem('Python Scripts', function (item) {
-                return item.count * 3500 + 1000;
-            }, function (item) {
-                return { productivity: Math.pow(item.count, 3) };
-            }, stats[5])]
-        };
+        _this.generateState();
         _this.tick = _this.tick.bind(_this);
         _this.click = _this.click.bind(_this);
         _this.buyItem = _this.buyItem.bind(_this);
@@ -154,36 +148,74 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
+        key: "generateState",
+        value: function generateState() {
+            var tasksCount = savedGame ? savedGame.tasksCount : 100;
+            var productivityCount = savedGame ? savedGame.productivityCount : 100;
+            this.state = {
+                tasksCount: tasksCount,
+                productivityCount: productivityCount,
+                items: [generateItem('Legal Pads', function (item) {
+                    return item.count + 1;
+                }, function (item) {
+                    return { tasks: item.count };
+                }), generateItem('Todo Apps', function (item) {
+                    return item.count * 35 + 35;
+                }, function (item) {
+                    return { tasks: item.count * 5 };
+                }), generateItem('Multitasking', function (item) {
+                    return 50 * Math.pow(item.count, 2) + 100;
+                }, function (item) {
+                    return {};
+                }), generateItem('Python Scripts', function (item) {
+                    return item.count * 3500 + 1000;
+                }, function (item) {
+                    return { productivity: Math.pow(item.count, 3) };
+                })]
+            };
+        }
+    }, {
         key: "buyItem",
         value: function buyItem(itemType) {
             var _this2 = this;
 
             var cost = itemType.cost(itemType);
             if (this.state.productivityCount >= cost) {
+                this.setItemCount(itemType, 1);
                 this.setState(function (currentState) {
-                    // clone dictionary
-                    var items = [];
-                    for (var i = 0; i < currentState.items.length; i++) {
-                        var item = generateItemFromItem(currentState.items[i]);
-                        if (item.name == itemType.name) {
-                            item.count += 1;
-                        }
-                        items.push(item);
-                    }
-
                     return {
-                        productivityCount: _this2.state.productivityCount - cost,
-                        items: items
+                        productivityCount: _this2.state.productivityCount - cost
                     };
                 });
             }
         }
     }, {
+        key: "setItemCount",
+        value: function setItemCount(itemType, count) {
+            var increment = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            this.setState(function (currentState) {
+                // clone dictionary
+                var items = [];
+                for (var _i = 0; _i < currentState.items.length; _i++) {
+                    var item = generateItemFromItem(currentState.items[_i]);
+                    if (item.name == itemType.name) {
+                        item.count = increment ? item.count + count : item.count;
+                    }
+                    items.push(item);
+                }
+
+                return {
+                    items: items
+                };
+            });
+        }
+    }, {
         key: "getItemByName",
         value: function getItemByName(name) {
-            for (var i = 0; i < this.state.items.length; i++) {
-                if (this.state.items[i].name == name) {
-                    return this.state.items[i];
+            for (var _i2 = 0; _i2 < this.state.items.length; _i2++) {
+                if (this.state.items[_i2].name == name) {
+                    return this.state.items[_i2];
                 }
             }
             return null;
@@ -200,30 +232,31 @@ var App = function (_React$Component) {
             });
         }
     }, {
+        key: "saveGame",
+        value: function saveGame() {
+            localStorage.setItem("savedGame", JSON.stringify({
+                version: VERSION,
+                state: this.state
+            }, SaveGameJSONHelper));
+        }
+    }, {
         key: "tick",
         value: function tick() {
             counter += 1;
-            if (counter % 15 == 0) {
-                var _stats = [this.state.tasksCount, this.state.productivityCount].concat(this.state.items.map(function (item) {
-                    return item.count;
-                }));
-
-                localStorage.setItem("savedGame", JSON.stringify({
-                    version: VERSION,
-                    stats: _stats
-                }));
+            if (counter % 30 == 1) {
+                this.saveGame();
             }
 
             this.setState(function (currentState) {
                 var newTasksCount = currentState.tasksCount + 1;
                 var newProductivityCount = currentState.productivityCount;
 
-                for (var i = 0; i < currentState.items.length; i++) {
-                    if (currentState.items[i].impact(currentState.items[i]).tasks) {
-                        newTasksCount += currentState.items[i].impact(currentState.items[i]).tasks;
+                for (var _i3 = 0; _i3 < currentState.items.length; _i3++) {
+                    if (currentState.items[_i3].impact(currentState.items[_i3]).tasks) {
+                        newTasksCount += currentState.items[_i3].impact(currentState.items[_i3]).tasks;
                     }
-                    if (currentState.items[i].impact(currentState.items[i]).productivity) {
-                        newProductivityCount += currentState.items[i].impact(currentState.items[i]).productivity;
+                    if (currentState.items[_i3].impact(currentState.items[_i3]).productivity) {
+                        newProductivityCount += currentState.items[_i3].impact(currentState.items[_i3]).productivity;
                     }
                 }
 
