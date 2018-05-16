@@ -2,9 +2,8 @@
   "name": "productivity-counter",
   "version": "1.0.0",
   "description": "What's better than having fun *and* being productive?",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel app.js -o compiled_app.js"
   },
   "repository": {
@@ -17,7 +16,10 @@
     "url": "https://github.com/jeffhou/Productivity-Counter/issues"
   },
   "homepage": "https://github.com/jeffhou/Productivity-Counter#readme",
+  "dependencies": {},
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0"
   }
 }
