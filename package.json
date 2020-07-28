@@ -4,8 +4,8 @@
   "description": "What's better than having fun *and* being productive?",
   "main": "app.js",
   "scripts": {
-    "deploy": "babel app.js -o compiled_app.js && python3 -m http.server",
-    "commit": "babel app.js -o compiled_app.js && git add -p && git commit"
+    "deploy": "babel src -d lib && python3 -m http.server",
+    "commit": "babel app.js -d compiled_app.js && git add -p && git commit"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,5 @@
   },
   "homepage": "https://github.com/jeffhou/Productivity-Counter#readme",
   "dependencies": {},
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-env": "^1.7.0"
-  }
+  "devDependencies": {}
 }
